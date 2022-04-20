@@ -10,6 +10,7 @@ impl Plugin for CollisionPlugin {
 }
 
 fn collision_system(
+    time: Res<Time>,
     player: Query<(&Sprite, &Transform, With<Player>)>,
     mut enemy: Query<(&Sprite, &mut Transform, With<Enemy>, Without<Player>)>,
 ) {
@@ -20,23 +21,37 @@ fn collision_system(
         None => todo!(),
     };
 
-    for (sprite, mut transform, _, _) in enemy.iter_mut() {
-        let enemy_size = match sprite.custom_size {
+    for (enemy_sprite, mut enemy_transform, _, _) in enemy.iter_mut() {
+        let enemy_size = match enemy_sprite.custom_size {
             Some(vec) => vec,
             None => todo!(),
         };
 
-        if transform.translation.x - (enemy_size.x / 2.0)
-            < player_position.x + (player_size.x / 2.0)
-        {
-            if transform.translation.y + enemy_size.y / 2.0
-                <= player_position.y + player_size.y / 2.0
-                && transform.translation.y - enemy_size.y / 2.0
-                    >= player_position.y - player_size.y / 2.0
+        let y_range =
+            (player_position.y - player_size.y / 2.0)..=(player_position.y + player_size.y / 2.0);
+
+        let x_range =
+            (player_position.x - player_size.x / 2.0)..=(player_position.x + player_size.x / 2.0);
+
+        println!("{}", player_position.distance(enemy_transform.translation));
+        // right and left collision
+        let y_range =
+            (player_position.y - player_size.y / 2.0)..=(player_position.y + player_size.y / 2.0);
+        if y_range.contains(&enemy_transform.translation.y) {
+            // right
+            if enemy_transform.translation.x - enemy_size.x / 2.0
+                <= player_position.x + player_size.x / 2.0
             {
-                transform.translation.x =
-                    player_position.x + player_size.x / 2.0 + enemy_size.x / 2.0;
+                enemy_transform.translation.x =
+                    player_position.x + (player_size.x + enemy_size.x) / 2.0;
             }
+            // left
+            // if enemy_transform.translation.x + enemy_size.x / 2.0
+            //     >= player_position.x - player_size.x / 2.0
+            // {
+            //     enemy_transform.translation.x =
+            //         player_position.x - (player_size.x / 2.0 + enemy_size.x / 2.0);
+            // }
         }
     }
 }

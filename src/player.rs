@@ -21,8 +21,7 @@ fn spawn_player(mut commands: Commands) {
         })
         .insert(Speed(200.))
         .insert(Sprint(2.))
-        .insert(Player)
-        .insert(Collider);
+        .insert(Player);
 }
 
 fn player_movement(

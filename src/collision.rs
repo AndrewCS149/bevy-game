@@ -26,12 +26,17 @@ fn collision_system(
             None => todo!(),
         };
 
-        if transform.translation.x - (enemy_size.x) < player_position.x + (player_size.x / 2.0) {
-            transform.translation.x = player_position.x + player_size.x;
+        if transform.translation.x - (enemy_size.x / 2.0)
+            < player_position.x + (player_size.x / 2.0)
+        {
+            if transform.translation.y + enemy_size.y / 2.0
+                <= player_position.y + player_size.y / 2.0
+                && transform.translation.y - enemy_size.y / 2.0
+                    >= player_position.y - player_size.y / 2.0
+            {
+                transform.translation.x =
+                    player_position.x + player_size.x / 2.0 + enemy_size.x / 2.0;
+            }
         }
     }
-
-    // if enemy_position.x - (enemy_size.x / 2.0) <= player_position.x + (player_size.x / 2.0) {
-    //     enemy.single_mut().1.translation.x = 0.0;
-    // }
 }

@@ -24,10 +24,10 @@ fn spawn_enemy(mut commands: Commands) {
             },
             ..default()
         })
-        .insert(Speed(150.0))
         .insert(Enemy)
-        .insert(BoundaryTrigger(250.0))
-        .insert(Collider);
+        .insert(Collider)
+        .insert(Speed(150.0))
+        .insert(BoundaryTrigger(250.0));
 }
 
 fn enemy_tracking(
@@ -36,24 +36,30 @@ fn enemy_tracking(
     mut player: Query<(&mut Transform, With<Player>, Without<Enemy>)>,
 ) {
     for (mut enemy_transform, enemy_speed, boundary, _) in enemy.iter_mut() {
-        let player_position = player.single_mut().0.translation;
+        let player_pos = player.single_mut().0.translation;
 
         // only start tracking if within the set boundary trigger
         if enemy_transform
             .translation
-            .abs_diff_eq(player_position, boundary.0)
+            .abs_diff_eq(player_pos, boundary.0)
         {
-            let mut new_position = Vec3::new(1.0, 1.0, 0.0);
+            let enemy_pos = enemy_transform.translation;
+            let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
+            let buff = 0.25;
 
-            if enemy_transform.translation.x > player_position.x {
-                new_position.x = -1.0;
-            }
+            new_pos.x = match player_pos.x {
+                num if enemy_pos.x > num + buff => -1.0,
+                num if enemy_pos.x < num - buff => 1.0,
+                _ => 0.0,
+            };
 
-            if enemy_transform.translation.y > player_position.y {
-                new_position.y = -1.0;
-            }
+            new_pos.y = match player_pos.y {
+                num if enemy_pos.y > num + buff => -1.0,
+                num if enemy_pos.y < num - buff => 1.0,
+                _ => 0.0,
+            };
 
-            enemy_transform.translation += new_position * enemy_speed.0 * time.delta_seconds();
+            enemy_transform.translation += new_pos * enemy_speed.0 * time.delta_seconds();
         }
     }
 }

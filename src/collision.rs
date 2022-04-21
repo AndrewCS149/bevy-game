@@ -39,7 +39,7 @@ fn collision(
         let half_player_y = player_size.y / 2.0;
 
         let half_enemy_x = enemy_size.x / 2.0;
-        let half_enemy_y = enemy_size.y / 2.;
+        let half_enemy_y = enemy_size.y / 2.0;
 
         // RIGHT
         if enemy_pos.x - half_enemy_x <= player_pos.x + half_player_x

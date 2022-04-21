@@ -36,3 +36,9 @@ struct BoundaryTrigger(f32);
 
 #[derive(Component)]
 struct Collider;
+
+#[derive(Component)]
+struct Direction(String);
+
+#[derive(Component)]
+struct Projectile;

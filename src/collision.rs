@@ -19,7 +19,7 @@ fn collision(
         Without<Player>,
     )>,
 ) {
-    let player_position = player.single().1.translation;
+    let player_pos = player.single().1.translation;
 
     let player_size = match player.single().0.custom_size {
         Some(vec) => vec,
@@ -32,57 +32,46 @@ fn collision(
             None => todo!(),
         };
 
+        let enemy_pos = enemy_transform.translation;
+
+        // this gives the collision space more pixels to hit. If it were just one, the collision would almost never happen
+        let half_player_x = player_size.x / 2.0;
+        let half_player_y = player_size.y / 2.0;
+
+        let half_enemy_x = enemy_size.x / 2.0;
+        let half_enemy_y = enemy_size.y / 2.;
+
         // RIGHT
-        if enemy_transform.translation.x - enemy_size.x / 2.0
-            <= player_position.x + player_size.x / 2.0
-            && enemy_transform.translation.x - enemy_size.x / 2.0
-                >= player_position.x + player_size.x / 2.0 - 10.0
-            && enemy_transform.translation.y - enemy_size.y / 2.0
-                <= player_position.y + player_size.y / 2.0
-            && enemy_transform.translation.y + enemy_size.y / 2.0
-                >= player_position.y - player_size.y / 2.0
+        if enemy_pos.x - half_enemy_x <= player_pos.x + half_player_x
+            && enemy_pos.x - half_enemy_x >= player_pos.x + half_player_x - half_player_x
+            && enemy_pos.y - half_enemy_y <= player_pos.y + half_player_y
+            && enemy_pos.y + half_enemy_y >= player_pos.y - half_player_y
         {
-            enemy_transform.translation.x =
-                player_position.x + (player_size.x + enemy_size.x) / 2.0;
+            enemy_transform.translation.x = player_pos.x + (player_size.x + enemy_size.x) / 2.0;
         }
         // LEFT
-        else if enemy_transform.translation.x + enemy_size.x / 2.0
-            >= player_position.x - player_size.x / 2.0
-            && enemy_transform.translation.x + enemy_size.x / 2.0
-                <= player_position.x - player_size.x / 2.0 + 10.0
-            && enemy_transform.translation.y - enemy_size.y / 2.0
-                <= player_position.y + player_size.y / 2.0
-            && enemy_transform.translation.y + enemy_size.y / 2.0
-                >= player_position.y - player_size.y / 2.0
+        else if enemy_pos.x + half_enemy_x >= player_pos.x - half_player_x
+            && enemy_pos.x + half_enemy_x <= player_pos.x - half_player_x + half_player_x
+            && enemy_pos.y - half_enemy_y <= player_pos.y + half_player_y
+            && enemy_pos.y + half_enemy_y >= player_pos.y - half_player_y
         {
-            enemy_transform.translation.x =
-                player_position.x - (player_size.x + enemy_size.x) / 2.0;
+            enemy_transform.translation.x = player_pos.x - (player_size.x + enemy_size.x) / 2.0;
         }
         // TOP
-        else if enemy_transform.translation.x + enemy_size.x / 2.0
-            >= player_position.x - player_size.x / 2.0
-            && enemy_transform.translation.x - enemy_size.x / 2.0
-                <= player_position.x + player_size.x / 2.0
-            && enemy_transform.translation.y - enemy_size.y / 2.0
-                <= player_position.y + player_size.y / 2.0
-            && enemy_transform.translation.y - enemy_size.y / 2.0
-                >= player_position.y + player_size.y / 2.0 - 10.0
+        else if enemy_pos.x + half_enemy_x >= player_pos.x - half_player_x
+            && enemy_pos.x - half_enemy_x <= player_pos.x + half_player_x
+            && enemy_pos.y - half_enemy_y <= player_pos.y + half_player_y
+            && enemy_pos.y - half_enemy_y >= player_pos.y + half_player_y - half_player_y
         {
-            enemy_transform.translation.y =
-                player_position.y + (player_size.y + enemy_size.y) / 2.0;
+            enemy_transform.translation.y = player_pos.y + (player_size.y + enemy_size.y) / 2.0;
         }
         // BOTTOM
-        else if enemy_transform.translation.x + enemy_size.x / 2.0
-            >= player_position.x - player_size.x / 2.0
-            && enemy_transform.translation.x - enemy_size.x / 2.0
-                <= player_position.x + player_size.x / 2.0
-            && enemy_transform.translation.y + enemy_size.y / 2.0
-                >= player_position.y - player_size.y / 2.0
-            && enemy_transform.translation.y + enemy_size.y / 2.0
-                <= player_position.y - player_size.y / 2.0 + 10.0
+        else if enemy_pos.x + half_enemy_x >= player_pos.x - half_player_x
+            && enemy_pos.x - half_enemy_x <= player_pos.x + half_player_x
+            && enemy_pos.y + half_enemy_y >= player_pos.y - half_player_y
+            && enemy_pos.y + half_enemy_y <= player_pos.y - half_player_y + half_player_y
         {
-            enemy_transform.translation.y =
-                player_position.y - (player_size.y + enemy_size.y) / 2.0;
+            enemy_transform.translation.y = player_pos.y - (player_size.y + enemy_size.y) / 2.0;
         }
     }
 }

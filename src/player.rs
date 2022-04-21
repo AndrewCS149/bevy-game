@@ -57,10 +57,12 @@ fn fire_projectile(
 }
 
 fn projectile_movement(
+    mut commands: Commands,
     time: Res<Time>,
-    mut projectile: Query<(&mut Transform, &Direction, &Speed, With<Projectile>)>,
+    mut windows: ResMut<Windows>,
+    mut projectile: Query<(Entity, &mut Transform, &Direction, &Speed, With<Projectile>)>,
 ) {
-    for (mut transform, direction, speed, _) in projectile.iter_mut() {
+    for (projectile, mut transform, direction, speed, _) in projectile.iter_mut() {
         let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
 
         // fire up left
@@ -94,6 +96,16 @@ fn projectile_movement(
         }
 
         transform.translation += new_pos * time.delta_seconds() * speed.0;
+
+        // despawn the projectile if it is outside of the window bounds
+        let window = windows.get_primary_mut().unwrap();
+        if transform.translation.x > window.width() / 2.0
+            || transform.translation.x < -(window.width() / 2.0)
+            || transform.translation.y > window.height() / 2.0
+            || transform.translation.y < -(window.height() / 2.0)
+        {
+            commands.entity(projectile).despawn();
+        }
     }
 }
 

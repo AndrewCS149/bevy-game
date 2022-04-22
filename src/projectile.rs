@@ -6,7 +6,8 @@ pub struct ProjectilePlugin;
 impl Plugin for ProjectilePlugin {
     fn build(&self, app: &mut App) {
         app.add_system(fire_projectile)
-            .add_system(projectile_movement);
+            .add_system(projectile_movement)
+            .add_system(despawn_projectile);
     }
 }
 
@@ -41,12 +42,10 @@ fn fire_projectile(
 }
 
 fn projectile_movement(
-    mut commands: Commands,
     time: Res<Time>,
-    mut windows: ResMut<Windows>,
-    mut projectile: Query<(Entity, &mut Transform, &Direction, &Speed, With<Projectile>)>,
+    mut projectile: Query<(&mut Transform, &Direction, &Speed, With<Projectile>)>,
 ) {
-    for (projectile, mut transform, direction, speed, _) in projectile.iter_mut() {
+    for (mut transform, direction, speed, _) in projectile.iter_mut() {
         let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
 
         // fire up left
@@ -80,8 +79,16 @@ fn projectile_movement(
         }
 
         transform.translation += new_pos * time.delta_seconds() * speed.0;
+    }
+}
 
-        // despawn the projectile if it is outside of the window bounds
+// despawn the projectile if it is outside of the window bounds
+fn despawn_projectile(
+    mut commands: Commands,
+    mut windows: ResMut<Windows>,
+    projectile: Query<(Entity, &Transform, With<Projectile>)>,
+) {
+    for (projectile, transform, _) in projectile.iter() {
         let window = windows.get_primary_mut().unwrap();
         if transform.translation.x > window.width() / 2.0
             || transform.translation.x < -(window.width() / 2.0)

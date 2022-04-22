@@ -32,7 +32,7 @@ fn fire_projectile(
     mut commands: Commands,
     player: Query<(&Transform, &Direction, With<Player>)>,
 ) {
-    if keys.pressed(KeyCode::Space) {
+    if keys.just_pressed(KeyCode::Space) {
         let player_pos = player.single().0.translation;
 
         let projectile = SpriteBundle {

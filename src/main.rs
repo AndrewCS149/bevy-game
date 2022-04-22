@@ -3,11 +3,13 @@ use bevy::prelude::*;
 mod collision;
 mod enemy;
 mod player;
+mod projectile;
 mod setup;
 
 use collision::CollisionPlugin;
 use enemy::EnemyPlugin;
 use player::PlayerPlugin;
+use projectile::ProjectilePlugin;
 use setup::SetupPlugin;
 
 fn main() {
@@ -17,6 +19,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(EnemyPlugin)
         .add_plugin(CollisionPlugin)
+        .add_plugin(ProjectilePlugin)
         .run();
 }
 #[derive(Component)]

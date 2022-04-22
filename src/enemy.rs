@@ -1,4 +1,4 @@
-use crate::{BoundaryTrigger, Collider, Enemy, Player, Speed};
+use crate::{BoundaryTrigger, Collider, Enemy, Player, Projectile, Speed};
 use bevy::prelude::*;
 
 pub struct EnemyPlugin;
@@ -6,7 +6,8 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(spawn_enemy)
-            .add_system(enemy_tracking);
+            .add_system(enemy_tracking)
+            .add_system(enemy_death);
     }
 }
 
@@ -60,6 +61,29 @@ fn enemy_tracking(
             };
 
             enemy_transform.translation += new_pos * enemy_speed.0 * time.delta_seconds();
+        }
+    }
+}
+
+fn enemy_death(
+    mut commands: Commands,
+    projectile: Query<(Entity, &Transform, With<Projectile>)>,
+    enemy: Query<(
+        Entity,
+        &Transform,
+        &Sprite,
+        With<Enemy>,
+        Without<Projectile>,
+    )>,
+) {
+    if let Some((projectile, projectile_pos, _)) = projectile.iter().next() {
+        for (enemy, enemy_pos, sprite, _, _) in enemy.iter() {
+            if enemy_pos.translation.distance(projectile_pos.translation)
+                < sprite.custom_size.unwrap().x / 2.0
+            {
+                commands.entity(enemy).despawn();
+                commands.entity(projectile).despawn();
+            }
         }
     }
 }

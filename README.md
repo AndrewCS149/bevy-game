@@ -9,12 +9,12 @@ This is a top-down, 2D style shooter game.
 
 ---
 ### Game Controls 
-W - move up
-D - move right
-S - move down
-A - move left 
-Left Shift - sprint
-Space - shoot
+- W - move up
+- D - move right
+- S - move down
+- A - move left 
+- Left Shift - sprint
+- Space - shoot
 
 ---
 ### Current Game State

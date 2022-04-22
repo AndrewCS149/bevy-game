@@ -23,6 +23,9 @@ fn main() {
         .run();
 }
 #[derive(Component)]
+struct IsSprinting(bool);
+
+#[derive(Component)]
 struct Speed(f32);
 
 #[derive(Component)]

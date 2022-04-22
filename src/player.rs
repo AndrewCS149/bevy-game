@@ -1,4 +1,4 @@
-use crate::{Direction, Player, Speed, Sprint};
+use crate::{Direction, IsSprinting, Player, Speed, Sprint};
 use bevy::prelude::*;
 pub struct PlayerPlugin;
 
@@ -22,6 +22,7 @@ fn spawn_player(mut commands: Commands) {
         .insert(Speed(200.0))
         .insert(Sprint(2.0))
         .insert(Player)
+        .insert(IsSprinting(false))
         .insert(Direction("R".to_string()));
 }
 
@@ -33,10 +34,11 @@ fn player_movement(
         &Speed,
         &Sprint,
         &mut Direction,
+        &mut IsSprinting,
         With<Player>,
     )>,
 ) {
-    for (mut transform, speed, sprint, mut direction, _) in player.iter_mut() {
+    for (mut transform, speed, sprint, mut direction, mut is_sprinting, _) in player.iter_mut() {
         let mut tmp_sprint = 1.;
         let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
 
@@ -85,6 +87,9 @@ fn player_movement(
         // sprint
         if keys.pressed(KeyCode::LShift) {
             tmp_sprint = sprint.0;
+            is_sprinting.0 = true;
+        } else {
+            is_sprinting.0 = false;
         }
 
         transform.translation += new_pos * speed.0 * tmp_sprint * time.delta_seconds();

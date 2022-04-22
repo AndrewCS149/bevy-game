@@ -1,4 +1,4 @@
-use crate::{Direction, Player, Projectile, Speed};
+use crate::{Direction, IsSprinting, Player, Projectile, Speed};
 use bevy::prelude::*;
 
 pub struct ProjectilePlugin;
@@ -13,9 +13,10 @@ impl Plugin for ProjectilePlugin {
 fn fire_projectile(
     keys: Res<Input<KeyCode>>,
     mut commands: Commands,
-    player: Query<(&Transform, &Direction, With<Player>)>,
+    player: Query<(&Transform, &Direction, &IsSprinting, With<Player>)>,
 ) {
-    if keys.just_pressed(KeyCode::Space) {
+    let sprinting = player.single().2 .0;
+    if keys.just_pressed(KeyCode::Space) && !sprinting {
         let player_pos = player.single().0.translation;
 
         let projectile = SpriteBundle {

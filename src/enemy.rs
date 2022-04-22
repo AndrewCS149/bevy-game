@@ -12,6 +12,19 @@ impl Plugin for EnemyPlugin {
 }
 
 fn spawn_enemy(mut commands: Commands) {
+    let healthbar = SpriteBundle {
+        sprite: Sprite {
+            color: Color::rgb(0.48, 0.98, 0.0),
+            custom_size: Some(Vec2::new(30.0, 3.0)),
+            ..default()
+        },
+        transform: Transform {
+            translation: Vec3::new(200.0, 240.0, 0.0),
+            ..default()
+        },
+        ..default()
+    };
+
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {

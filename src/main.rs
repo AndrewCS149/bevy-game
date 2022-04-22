@@ -22,6 +22,7 @@ fn main() {
         .add_plugin(ProjectilePlugin)
         .run();
 }
+
 #[derive(Component)]
 struct IsSprinting(bool);
 

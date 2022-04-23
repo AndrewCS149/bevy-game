@@ -106,6 +106,7 @@ fn enemy_death(
 
                 health.0 -= damage.0;
 
+                // depsawn enemy if health is at or below 0.
                 if health.0 <= 0 {
                     commands.entity(enemy).despawn_recursive();
                 }

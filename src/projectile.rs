@@ -1,4 +1,4 @@
-use crate::{Direction, IsSprinting, Player, Projectile, Speed};
+use crate::{Damage, Direction, IsSprinting, Player, Projectile, Speed};
 use bevy::prelude::*;
 
 pub struct ProjectilePlugin;
@@ -37,6 +37,7 @@ fn fire_projectile(
             .spawn_bundle(projectile)
             .insert(Direction(player.single().1 .0.clone()))
             .insert(Projectile)
+            .insert(Damage(25))
             .insert(Speed(1000.0));
     }
 }

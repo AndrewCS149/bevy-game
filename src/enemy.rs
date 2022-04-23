@@ -1,4 +1,4 @@
-use crate::{BoundaryTrigger, Collider, Enemy, Player, Projectile, Speed};
+use crate::{BoundaryTrigger, Collider, Damage, Enemy, Health, Player, Projectile, Speed};
 use bevy::{core::FixedTimestep, prelude::*};
 
 pub struct EnemyPlugin;
@@ -16,7 +16,7 @@ impl Plugin for EnemyPlugin {
 }
 
 fn spawn_enemy(mut commands: Commands) {
-    let healthbar_spritebundle = SpriteBundle {
+    let healthbar = SpriteBundle {
         sprite: Sprite {
             color: Color::GREEN,
             custom_size: Some(Vec2::new(30.0, 3.0)),
@@ -29,7 +29,7 @@ fn spawn_enemy(mut commands: Commands) {
         ..default()
     };
 
-    let enemy_spritebundle = SpriteBundle {
+    let enemy = SpriteBundle {
         sprite: Sprite {
             color: Color::TOMATO,
             custom_size: Some(Vec2::new(30.0, 30.0)),
@@ -43,11 +43,12 @@ fn spawn_enemy(mut commands: Commands) {
     };
 
     commands
-        .spawn_bundle(enemy_spritebundle)
+        .spawn_bundle(enemy)
         .with_children(|parent| {
-            parent.spawn_bundle(healthbar_spritebundle);
+            parent.spawn_bundle(healthbar);
         })
         .insert(Enemy)
+        .insert(Health(100))
         .insert(Speed(150.0))
         .insert(Collider)
         .insert(BoundaryTrigger(250.0));
@@ -86,22 +87,28 @@ fn enemy_tracking(
 
 fn enemy_death(
     mut commands: Commands,
-    projectile: Query<(Entity, &Transform, With<Projectile>)>,
-    enemy: Query<(
+    projectile: Query<(Entity, &Transform, &Damage, With<Projectile>)>,
+    mut enemy: Query<(
         Entity,
         &Transform,
         &Sprite,
+        &mut Health,
         With<Enemy>,
         Without<Projectile>,
     )>,
 ) {
-    if let Some((projectile, projectile_pos, _)) = projectile.iter().next() {
-        for (enemy, enemy_pos, sprite, _, _) in enemy.iter() {
+    if let Some((projectile, projectile_pos, damage, _)) = projectile.iter().next() {
+        for (enemy, enemy_pos, sprite, mut health, _, _) in enemy.iter_mut() {
             if enemy_pos.translation.distance(projectile_pos.translation)
                 < sprite.custom_size.unwrap().x / 2.0
             {
-                commands.entity(enemy).despawn_recursive();
                 commands.entity(projectile).despawn();
+
+                health.0 -= damage.0;
+
+                if health.0 <= 0 {
+                    commands.entity(enemy).despawn_recursive();
+                }
             }
         }
     }

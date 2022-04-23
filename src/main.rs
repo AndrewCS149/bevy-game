@@ -24,6 +24,9 @@ fn main() {
 }
 
 #[derive(Component)]
+struct Health(u32);
+
+#[derive(Component)]
 struct Speed(f32);
 
 #[derive(Component)]
@@ -49,3 +52,6 @@ struct Direction(String);
 
 #[derive(Component)]
 struct Projectile;
+
+#[derive(Component)]
+struct Damage(u32);

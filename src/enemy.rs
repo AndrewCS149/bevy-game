@@ -1,13 +1,17 @@
 use crate::{BoundaryTrigger, Collider, Enemy, Player, Projectile, Speed};
-use bevy::prelude::*;
+use bevy::{core::FixedTimestep, prelude::*};
 
 pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(spawn_enemy)
-            .add_system(enemy_tracking)
-            .add_system(enemy_death);
+        app.add_system_set(
+            SystemSet::new()
+                .with_run_criteria(FixedTimestep::step(2.0))
+                .with_system(spawn_enemy),
+        )
+        .add_system(enemy_tracking)
+        .add_system(enemy_death);
     }
 }
 
@@ -42,6 +46,8 @@ fn spawn_enemy(mut commands: Commands) {
         .insert(Collider)
         .insert(Speed(150.0))
         .insert(BoundaryTrigger(250.0));
+
+    // commands.spawn_bundle(healthbar);
 }
 
 fn enemy_tracking(
@@ -61,17 +67,14 @@ fn enemy_tracking(
             let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
             let buff = 0.25;
 
-            new_pos.x = match player_pos.x {
-                num if enemy_pos.x > num + buff => -1.0,
-                num if enemy_pos.x < num - buff => 1.0,
+            let closure = |e_pos: f32, p_pos: f32| match p_pos {
+                num if e_pos > num + buff => -1.0,
+                num if e_pos < num - buff => 1.0,
                 _ => 0.0,
             };
 
-            new_pos.y = match player_pos.y {
-                num if enemy_pos.y > num + buff => -1.0,
-                num if enemy_pos.y < num - buff => 1.0,
-                _ => 0.0,
-            };
+            new_pos.x = closure(enemy_pos.x, player_pos.x);
+            new_pos.y = closure(enemy_pos.y, player_pos.y);
 
             enemy_transform.translation += new_pos * enemy_speed.0 * time.delta_seconds();
         }

@@ -13,7 +13,7 @@ fn spawn_player(mut commands: Commands) {
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
-                color: Color::rgb(0.25, 0.25, 0.75),
+                color: Color::AZURE,
                 custom_size: Some(Vec2::new(30.0, 30.0)),
                 ..default()
             },

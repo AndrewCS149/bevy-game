@@ -22,7 +22,7 @@ fn fire_projectile(
 
         let projectile = SpriteBundle {
             sprite: Sprite {
-                color: Color::rgb(0.7, 0.7, 0.1),
+                color: Color::YELLOW,
                 custom_size: Some(Vec2::new(5.0, 5.0)),
                 ..default()
             },

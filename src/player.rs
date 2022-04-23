@@ -20,7 +20,7 @@ fn spawn_player(mut commands: Commands) {
             ..default()
         })
         .insert(Speed(200.0))
-        .insert(Sprint(2.0))
+        .insert(Sprint(1.8))
         .insert(Player)
         .insert(IsSprinting(false))
         .insert(Direction("R".to_string()));

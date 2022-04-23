@@ -24,10 +24,10 @@ fn main() {
 }
 
 #[derive(Component)]
-struct IsSprinting(bool);
+struct Speed(f32);
 
 #[derive(Component)]
-struct Speed(f32);
+struct IsSprinting(bool);
 
 #[derive(Component)]
 struct Sprint(f32);

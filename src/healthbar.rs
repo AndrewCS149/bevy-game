@@ -6,8 +6,8 @@ pub struct HealthBarPlugin;
 
 impl Plugin for HealthBarPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PostStartup, spawn_healthbar)
-            .add_system(move_healthbar);
+        app.add_startup_system_to_stage(StartupStage::PostStartup, spawn_healthbar);
+        // .add_system(move_healthbar);
     }
 }
 
@@ -29,7 +29,10 @@ fn spawn_healthbar(mut commands: Commands, enemy: Query<(&Transform, &Sprite, Wi
                 },
                 ..default()
             })
-            .insert(HealthBar(100));
+            .insert(HealthBar)
+            .insert(Enemy);
+
+        println!("HEALTH SPAWNED");
     }
 }
 

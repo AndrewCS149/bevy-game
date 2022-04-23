@@ -16,38 +16,41 @@ impl Plugin for EnemyPlugin {
 }
 
 fn spawn_enemy(mut commands: Commands) {
-    let healthbar = SpriteBundle {
+    let healthbar_spritebundle = SpriteBundle {
         sprite: Sprite {
             color: Color::rgb(0.48, 0.98, 0.0),
             custom_size: Some(Vec2::new(30.0, 3.0)),
             ..default()
         },
         transform: Transform {
-            translation: Vec3::new(200.0, 240.0, 0.0),
+            translation: Vec3::new(0.0, 20.0, 0.0),
+            ..default()
+        },
+        ..default()
+    };
+
+    let enemy_spritebundle = SpriteBundle {
+        sprite: Sprite {
+            color: Color::rgb(0.25, 0.25, 0.25),
+            custom_size: Some(Vec2::new(30.0, 30.0)),
+            ..default()
+        },
+        transform: Transform {
+            translation: Vec3::new(200.0, 200.0, 0.0),
             ..default()
         },
         ..default()
     };
 
     commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::rgb(0.25, 0.25, 0.25),
-                custom_size: Some(Vec2::new(30.0, 30.0)),
-                ..default()
-            },
-            transform: Transform {
-                translation: Vec3::new(200.0, 200.0, 0.0),
-                ..default()
-            },
-            ..default()
+        .spawn_bundle(enemy_spritebundle)
+        .with_children(|parent| {
+            parent.spawn_bundle(healthbar_spritebundle);
         })
         .insert(Enemy)
-        .insert(Collider)
         .insert(Speed(150.0))
+        .insert(Collider)
         .insert(BoundaryTrigger(250.0));
-
-    // commands.spawn_bundle(healthbar);
 }
 
 fn enemy_tracking(
@@ -67,14 +70,14 @@ fn enemy_tracking(
             let mut new_pos = Vec3::new(0.0, 0.0, 0.0);
             let buff = 0.25;
 
-            let closure = |e_pos: f32, p_pos: f32| match p_pos {
+            let calc_new_pos = |e_pos: f32, p_pos: f32| match p_pos {
                 num if e_pos > num + buff => -1.0,
                 num if e_pos < num - buff => 1.0,
                 _ => 0.0,
             };
 
-            new_pos.x = closure(enemy_pos.x, player_pos.x);
-            new_pos.y = closure(enemy_pos.y, player_pos.y);
+            new_pos.x = calc_new_pos(enemy_pos.x, player_pos.x);
+            new_pos.y = calc_new_pos(enemy_pos.y, player_pos.y);
 
             enemy_transform.translation += new_pos * enemy_speed.0 * time.delta_seconds();
         }
@@ -97,7 +100,7 @@ fn enemy_death(
             if enemy_pos.translation.distance(projectile_pos.translation)
                 < sprite.custom_size.unwrap().x / 2.0
             {
-                commands.entity(enemy).despawn();
+                commands.entity(enemy).despawn_recursive();
                 commands.entity(projectile).despawn();
             }
         }

@@ -1,6 +1,10 @@
 use crate::{BoundaryTrigger, Collider, Damage, Enemy, Health, Player, Projectile, Speed};
 use bevy::{core::FixedTimestep, prelude::*};
 
+const HEALTH: f32 = 200.0;
+const SPEED: f32 = 150.0;
+const TRIGGER_BOUNDARY: f32 = 250.0;
+
 pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
@@ -48,10 +52,10 @@ fn spawn_enemy(mut commands: Commands) {
             parent.spawn_bundle(healthbar);
         })
         .insert(Enemy)
-        .insert(Health(100))
-        .insert(Speed(150.0))
         .insert(Collider)
-        .insert(BoundaryTrigger(250.0));
+        .insert(Health(HEALTH))
+        .insert(Speed(SPEED))
+        .insert(BoundaryTrigger(TRIGGER_BOUNDARY));
 }
 
 fn enemy_tracking(
@@ -107,8 +111,39 @@ fn enemy_death(
                 health.0 -= damage.0;
 
                 // depsawn enemy if health is at or below 0.
-                if health.0 <= 0 {
+                if health.0 <= 0.0 {
                     commands.entity(enemy).despawn_recursive();
+                } else {
+                    let enemy_width = sprite.custom_size.unwrap().x;
+
+                    // compute new healthbar size, color and location
+                    let remaining_health = enemy_width / (HEALTH / health.0);
+                    let x_pos = -((remaining_health - enemy_width).abs() / 2.0);
+                    let new_color = match health.0 {
+                        h if h < HEALTH / 4.0 => Color::ORANGE,
+                        h if h < HEALTH / 2.0 => Color::YELLOW,
+                        _ => Color::GREEN,
+                    };
+
+                    // create a new healthbar with updated health and location
+                    let updated_healthbar = SpriteBundle {
+                        sprite: Sprite {
+                            color: new_color,
+                            custom_size: Some(Vec2::new(remaining_health, 3.0)),
+                            ..default()
+                        },
+                        transform: Transform {
+                            translation: Vec3::new(x_pos, 20.0, 0.0),
+                            ..default()
+                        },
+                        ..default()
+                    };
+
+                    // despawn the old health bar and spawn the new updated healthbar
+                    commands.entity(enemy).despawn_descendants();
+                    commands.entity(enemy).with_children(|parent| {
+                        parent.spawn_bundle(updated_healthbar);
+                    });
                 }
             }
         }

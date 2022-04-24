@@ -37,7 +37,7 @@ fn fire_projectile(
             .spawn_bundle(projectile)
             .insert(Direction(player.single().1 .0.clone()))
             .insert(Projectile)
-            .insert(Damage(25))
+            .insert(Damage(25.0))
             .insert(Speed(1000.0));
     }
 }

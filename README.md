@@ -27,9 +27,20 @@ This is a top-down, 2D style shooter game.
 - Player is able to shoot
 - Player is restricted from shooting while sprinting
 - Enemy will begin tracking the player once the player enters the enemy's 'trigger radius'.
-- Enemies have a health bar (non-functional atm) and will die (despawn) once their health reaches 0.
+- Enemies have a health bar and will die (despawn) once their health reaches 0.
 - Collision properties exists between player and enemies. 
 
-![pic1](pictures/pic1.png)
+---
+### Development Pictures
 
-![pic2](pictures/pic2.png)
+#### 04-24-2022
+
+![pic1](pictures/april24_2022/pic1.png)
+![pic2](pictures/april24_2022/pic2.png)
+![pic3](pictures/april24_2022/pic3.png)
+
+
+#### 04-22-2022
+
+![pic1](pictures/april22_2022/pic1.png)
+![pic2](pictures/april22_2022/pic2.png)

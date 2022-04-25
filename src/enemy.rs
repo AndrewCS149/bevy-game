@@ -1,5 +1,6 @@
 use crate::{BoundaryTrigger, Collider, Damage, Enemy, Health, Player, Projectile, Speed};
 use bevy::{core::FixedTimestep, prelude::*};
+use bevy_rapier2d::physics::ColliderBundle;
 
 const HEALTH: f32 = 200.0;
 const SPEED: f32 = 150.0;

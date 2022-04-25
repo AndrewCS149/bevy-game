@@ -11,15 +11,17 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AZURE,
-                custom_size: Some(Vec2::new(30.0, 30.0)),
-                ..default()
-            },
+    let player = SpriteBundle {
+        sprite: Sprite {
+            color: Color::AZURE,
+            custom_size: Some(Vec2::new(30.0, 30.0)),
             ..default()
-        })
+        },
+        ..default()
+    };
+
+    commands
+        .spawn_bundle(player)
         .insert(Speed(200.0))
         .insert(Sprint(1.8))
         .insert(Player)

@@ -1,5 +1,6 @@
 use crate::{Direction, IsSprinting, Player, Speed, Sprint};
 use bevy::prelude::*;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

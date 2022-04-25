@@ -7,4 +7,3 @@ version = "0.1.0"
 
 [dependencies]
 bevy = "0.7"
-bevy_rapier2d = "0.12.1"
